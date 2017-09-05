@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Vue递归组件 | Lin Rui</title>
+
+  
+  <meta name="author" content="Lin Rui">
+  
+
+  
+  <meta name="description" content="最近公司后台管理的需求，需要支持三级以上菜单导航，由于之前的实现没有考虑到这点，只能支持两级菜单。于是重构这个组件，马上想到的就是递归组件的用法。
+json数据结构由于要兼容老系统，所以在数据结构上不能有太大的修改，菜单栏的配置数据结构大概是这样的
+
+123456789101112131415161">
+  
+
+  
+  
+  <meta name="keywords" content="vue 递归">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Vue递归组件"/>
+
+  <meta property="og:site_name" content="Lin Rui"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Lin Rui" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Lin Rui</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">Home</a></li>
+      
+        <li><a href="/archives">Archives</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Vue递归组件</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2017/09/05/tree-md/" rel="bookmark">
+        <time class="entry-date published" datetime="2017-09-05T12:50:43.000Z">
+          2017-09-05
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h5 id="最近公司后台管理的需求，需要支持三级以上菜单导航，由于之前的实现没有考虑到这点，只能支持两级菜单。于是重构这个组件，马上想到的就是递归组件的用法。"><a href="#最近公司后台管理的需求，需要支持三级以上菜单导航，由于之前的实现没有考虑到这点，只能支持两级菜单。于是重构这个组件，马上想到的就是递归组件的用法。" class="headerlink" title="最近公司后台管理的需求，需要支持三级以上菜单导航，由于之前的实现没有考虑到这点，只能支持两级菜单。于是重构这个组件，马上想到的就是递归组件的用法。"></a>最近公司后台管理的需求，需要支持三级以上菜单导航，由于之前的实现没有考虑到这点，只能支持两级菜单。于是重构这个组件，马上想到的就是递归组件的用法。</h5><blockquote>
+<p>json数据结构<br>由于要兼容老系统，所以在数据结构上不能有太大的修改，菜单栏的配置数据结构大概是这样的</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">menus: [&#123;</div><div class="line">  <span class="string">'name'</span>: <span class="string">'首页话题'</span>,</div><div class="line">  <span class="string">'icon'</span>: <span class="string">'fa fa-comments-o'</span>,</div><div class="line">  <span class="string">'path'</span>: <span class="string">'/topic'</span></div><div class="line">&#125;, &#123;</div><div class="line">  <span class="string">'name'</span>: <span class="string">'反馈中心'</span>,</div><div class="line">  <span class="string">'icon'</span>: <span class="string">'fa fa-star'</span>,</div><div class="line">  <span class="string">'subMenu'</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">'name'</span>: <span class="string">'APP反馈'</span>,</div><div class="line">      <span class="string">'path'</span>: <span class="string">'/old_manage/1'</span></div><div class="line">    &#125;, &#123;</div><div class="line">      <span class="string">'name'</span>: <span class="string">'回复设置'</span>,</div><div class="line">      <span class="string">'path'</span>: <span class="string">'/old_manage/2'</span></div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;, &#123;</div><div class="line">  <span class="string">'name'</span>: <span class="string">'广告管理'</span>,</div><div class="line">  <span class="string">'icon'</span>: <span class="string">'fa fa-cogs'</span>,</div><div class="line">  <span class="string">'subMenu'</span>: [&#123;</div><div class="line">    <span class="string">'name'</span>: <span class="string">'广告位管理'</span>,</div><div class="line">    <span class="string">'path'</span>: <span class="string">'/xads/ads_manage'</span></div><div class="line">  &#125;, &#123;</div><div class="line">    <span class="string">'name'</span>: <span class="string">'AFP'</span>,</div><div class="line">    <span class="string">'subMenu'</span>: [&#123;</div><div class="line">      <span class="string">'name'</span>: <span class="string">'客户报告'</span>,</div><div class="line">      <span class="string">'path'</span>: <span class="string">'/afp/customer_report'</span></div><div class="line">    &#125;, &#123;</div><div class="line">      <span class="string">'name'</span>: <span class="string">'投放报告'</span>,</div><div class="line">      <span class="string">'path'</span>: <span class="string">'/afp/put_on_report'</span></div><div class="line">    &#125;]</div><div class="line">  &#125;, &#123;</div><div class="line">    <span class="string">'name'</span>: <span class="string">'DSP'</span>,</div><div class="line">    <span class="string">'subMenu'</span>: [&#123;</div><div class="line">      <span class="string">'name'</span>: <span class="string">'白名单'</span>,</div><div class="line">      <span class="string">'path'</span>: <span class="string">'/dsp/whitelist'</span></div><div class="line">    &#125;, &#123;</div><div class="line">      <span class="string">'name'</span>: <span class="string">'黑名单'</span>,</div><div class="line">      <span class="string">'path'</span>: <span class="string">'/dsp/blacklist'</span></div><div class="line">    &#125;, &#123;</div><div class="line">      <span class="string">'name'</span>: <span class="string">'过滤词'</span>,</div><div class="line">      <span class="string">'path'</span>: <span class="string">'/dsp/filter_words'</span></div><div class="line">    &#125;]</div><div class="line">  &#125;]</div><div class="line">&#125;]</div></pre></td></tr></table></figure>
+<blockquote>
+<p>Vue递归组件<br>很明显，是一个数组，所以采用v-for渲染出一个列表</p>
+</blockquote>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">el-menu</span> <span class="attr">theme</span>=<span class="string">"dark"</span> <span class="attr">:default-active</span>=<span class="string">'activeNode'</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">tree</span> <span class="attr">v-for</span>=<span class="string">'tree in menus'</span> <span class="attr">:key</span>=<span class="string">'tree.key'</span> <span class="attr">:tree</span>=<span class="string">'tree'</span> /&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">el-menu</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>项目ui库是采用element-ui，代码中的el-menu是ui库提供的。首先v-for出每个菜单节点，即里面的tree组件</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">// Tree.vue</div><div class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">el-submenu</span> <span class="attr">v-if</span>=<span class="string">'tree.subMenu'</span> <span class="attr">:index</span>=<span class="string">'tree.key.toString()'</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">template</span> <span class="attr">slot</span>=<span class="string">"title"</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">i</span> <span class="attr">v-if</span>=<span class="string">"tree.icon"</span> <span class="attr">:class</span>=<span class="string">"tree.icon.split(' ')"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"nav-text"</span>&gt;</span>&#123;&#123; tree.name &#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">template</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">tree</span> <span class="attr">v-for</span>=<span class="string">'node in tree.subMenu'</span> <span class="attr">:tree</span>=<span class="string">'node'</span> <span class="attr">:key</span>=<span class="string">'node.key'</span> /&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">el-submenu</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">router-link</span> <span class="attr">:to</span>=<span class="string">"tree.path"</span> <span class="attr">v-else</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">el-menu-item</span> <span class="attr">:index</span>=<span class="string">"tree.key.toString()"</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">i</span> <span class="attr">v-if</span>=<span class="string">"tree.icon"</span> <span class="attr">:class</span>=<span class="string">"tree.icon.split(' ')"</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"nav-text"</span>&gt;</span>&#123;&#123;tree.name&#125;&#125;<span class="tag">&lt;/<span class="name">span</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">el-menu-item</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">router-link</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></div><div class="line"><span class="javascript"><span class="keyword">import</span> &#123; components &#125; <span class="keyword">from</span> <span class="string">'@/utils'</span></span></div><div class="line"><span class="javascript"><span class="keyword">import</span> &#123; Submenu, MenuItem &#125; <span class="keyword">from</span> <span class="string">'element-ui'</span></span></div><div class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></div><div class="line"><span class="javascript">  name: <span class="string">'tree'</span>,</span></div><div class="line"><span class="javascript">  props: [<span class="string">'tree'</span>],</span></div><div class="line"><span class="undefined">  components: components([Submenu, MenuItem])</span></div><div class="line"><span class="undefined">&#125;</span></div><div class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>思路是这样的：tree组件接受一个props:[‘tree’]，然后判断是否存在子菜单，存在的话便递归自身，不存在即生成节点</p>
+<p>渲染后出现类似以下结果</p>
+<p><img src="/images/screenshoot/tree.png" alt="递归菜单"></p>
+<blockquote>
+<p>总结<br>Vue组件开发中有很多有意思的技巧，用好了会减少很多不必要的逻辑。</p>
+</blockquote>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/vue-递归/">vue 递归</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2017 Lin Rui
+    
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>

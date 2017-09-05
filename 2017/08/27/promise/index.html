@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ES6之Promise | Lin Rui</title>
+
+  
+  <meta name="author" content="Lin Rui">
+  
+
+  
+  <meta name="description" content="Promise 是异步编程的一种解决方案，比传统的解决方案——回调函数和事件——更合理和更强大。它由社区最早提出和实现，ES6 将其写进了语言标准，统一了用法，原生提供了Promise对象。
+Promise.prototype.resolve &amp;amp;&amp;amp; Promise.prototype">
+  
+
+  
+  
+  <meta name="keywords" content="">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="ES6之Promise"/>
+
+  <meta property="og:site_name" content="Lin Rui"/>
+
+  
+  <meta property="og:image" content="/favicon.ico"/>
+  
+
+  <link href="/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Lin Rui" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+</head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Lin Rui</a>
+    </h1>
+    <p class="site-description"></p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">Home</a></li>
+      
+        <li><a href="/archives">Archives</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>ES6之Promise</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/2017/08/27/promise/" rel="bookmark">
+        <time class="entry-date published" datetime="2017-08-27T12:46:15.000Z">
+          2017-08-27
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <h4 id="Promise-是异步编程的一种解决方案，比传统的解决方案——回调函数和事件——更合理和更强大。它由社区最早提出和实现，ES6-将其写进了语言标准，统一了用法，原生提供了Promise对象。"><a href="#Promise-是异步编程的一种解决方案，比传统的解决方案——回调函数和事件——更合理和更强大。它由社区最早提出和实现，ES6-将其写进了语言标准，统一了用法，原生提供了Promise对象。" class="headerlink" title="Promise 是异步编程的一种解决方案，比传统的解决方案——回调函数和事件——更合理和更强大。它由社区最早提出和实现，ES6 将其写进了语言标准，统一了用法，原生提供了Promise对象。"></a>Promise 是异步编程的一种解决方案，比传统的解决方案——回调函数和事件——更合理和更强大。它由社区最早提出和实现，ES6 将其写进了语言标准，统一了用法，原生提供了Promise对象。</h4><blockquote>
+<p>Promise.prototype.resolve &amp;&amp; Promise.prototype.reject</p>
+</blockquote>
+<p>先看个简单的例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> p = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</div><div class="line">  setTimeout(resolve, <span class="number">2000</span>, <span class="string">'1'</span>)</div><div class="line">&#125;)</div><div class="line"></div><div class="line">p.then(<span class="built_in">console</span>.log)</div><div class="line"><span class="comment">// 1</span></div></pre></td></tr></table></figure>
+<!-- ![](/images/screenshoot/promise-1.png) -->
+<p>上面的例子通过new一个Promise instance，开始处于pending状态，2秒后resolve,处于resolved状态，打印出1。状态一旦确定，便不能改变。而且promise支持链式调用。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">p.then(<span class="built_in">console</span>.log)</div><div class="line"><span class="comment">// 继续输出1</span></div></pre></td></tr></table></figure>
+<p>再看一个例子</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</div><div class="line">  reject(<span class="string">'fail'</span>)</div><div class="line">&#125;)</div><div class="line"><span class="comment">// 这里的promise处于rejected状态，由于没有捕捉，浏览器上可以看到一个错误：</span></div><div class="line"><span class="comment">// Uncaught (in promise) undefined</span></div><div class="line"></div><div class="line">p2.catch(<span class="built_in">console</span>.log)</div><div class="line"><span class="comment">// 'fail'</span></div><div class="line"><span class="comment">// 在浏览器中可以看到promise变为resolved状态，意味着如果再继续写then方法，将会被执行</span></div><div class="line"></div><div class="line">p2.catch(<span class="built_in">console</span>.log).then(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="number">1</span>))</div><div class="line"><span class="comment">// 'fail'</span></div><div class="line"><span class="comment">// 1</span></div><div class="line"><span class="comment">// 但是再次打印出p2，显示的还是rejected，这里是个需要注意的点</span></div></pre></td></tr></table></figure>
+<p>then方法也可以接受2个参数，前者在resolve后执行，后者在reject后执行</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> p3 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</div><div class="line">  scccess ? resolve() : reject()</div><div class="line">&#125;)</div><div class="line"></div><div class="line">p3.then( <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'success'</span>), () =&gt; <span class="built_in">console</span>.log(<span class="string">'fail'</span>))</div><div class="line"><span class="comment">// 成功时打印success，失败打印fail</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>Promise.all</p>
+</blockquote>
+<p>Promise.all方法用于将多个promise instance包装成一个新的Promise instance，如下例子：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> p4 = <span class="built_in">Promise</span>.all(p1, p2, p3)</div></pre></td></tr></table></figure></p>
+<p>Promise.all接受一个数组作为参数（也可以不是数组，但必须具有 Iterator 接口，且返回的每个成员都是 Promise 实例)，它会做初步处理，如果数组成员不是Promise instance，会先调用Promise.resolve方法，将其转换为Promise instance，这里p的状态分为2种情况</p>
+<ul>
+<li>(1) 只有当数组成员全部状态都变成resolved，p的状态才会是resolved，此时p1,p2,p3的返回值组成一个数组作为p回调函数的参数</li>
+<li>(2) 如果数组成员有一个状态变为rejected，p的状态也会变为rejected，第一个处于rejected的返回值作为p回调函数的参数</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">p4 = <span class="built_in">Promise</span>.all([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]).then(<span class="built_in">console</span>.log)</div><div class="line"><span class="comment">// [1, 2, 3]</span></div><div class="line"></div><div class="line">p4 = <span class="built_in">Promise</span>.all([<span class="number">1</span>,<span class="number">2</span>, <span class="built_in">Promise</span>.reject(<span class="string">'fail'</span>), <span class="built_in">Promise</span>.reject(<span class="string">'fail2'</span>)])</div><div class="line">p4.catch(<span class="built_in">console</span>.log)</div><div class="line"><span class="comment">// 'fail'</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>Promise.race</p>
+</blockquote>
+<p>Promise.race方法同样是将多个promise instance包装成一个新的Promise instance，如下例子：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">let</span> p5 = <span class="built_in">Promise</span>.race(p1, p2, p3)</div></pre></td></tr></table></figure></p>
+<p>Promise.race参数和Promise.all相同，只要数组成员某一个promise的状态发生变化，p5的状态也同样跟着变化，率先改变的promise的返回值就传递给p5的回调函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">p5 = <span class="built_in">Promise</span>.race([<span class="number">1</span>,<span class="number">2</span>, <span class="built_in">Promise</span>.reject(<span class="string">'fail'</span>), <span class="built_in">Promise</span>.reject(<span class="string">'fail2'</span>)])</div><div class="line">p5</div><div class="line">.then(<span class="built_in">console</span>.log)</div><div class="line">.catch(<span class="built_in">console</span>.log)</div><div class="line"><span class="comment">// 1</span></div></pre></td></tr></table></figure>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><h5 id="Promise已经在es6新标准中被实现，配合babel，可以被广泛使用，主要用于处理异步回调。还可以结合generator，async-await"><a href="#Promise已经在es6新标准中被实现，配合babel，可以被广泛使用，主要用于处理异步回调。还可以结合generator，async-await" class="headerlink" title="Promise已经在es6新标准中被实现，配合babel，可以被广泛使用，主要用于处理异步回调。还可以结合generator，async/await"></a>Promise已经在es6新标准中被实现，配合babel，可以被广泛使用，主要用于处理异步回调。还可以结合generator，async/await</h5>
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2017 Lin Rui
+    
+  </p>
+</footer>
+    
+  </div>
+</div>
+</body>
+</html>
